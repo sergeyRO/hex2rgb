@@ -6,8 +6,7 @@ export interface IForm{
 }
     
 export default function FormRGB() {
-  const regexp = /^[#][A,B,C,D,E,F,a,b,c,d,e,f,\d]{6}/g;
-
+  const regexp = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
   const[form,setForm]=useState<IForm>({
     hex: "",
     rgb: ""
@@ -15,19 +14,27 @@ export default function FormRGB() {
   
   let rgb_val = '';
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {value} = e.target;
-    console.log(value);
-    console.log(regexp.test(value));
-    regexp.test(value)?rgb_val = 'rgb()':rgb_val = 'Ошибка!';
-    console.log(rgb_val);
+    let {value} = e.target;
+    let color_hex = regexp.test(value);
+
+    if (value.length==7) 
+    {
+        if (color_hex) 
+        {
+            rgb_val = 'rgb('+parseInt(value.slice(1, 3), 16)+', '+parseInt(value.slice(3, 5), 16)+', '+parseInt(value.slice(5, 7), 16)+')'
+            document.body.style.backgroundColor = value; 
+        }
+     else rgb_val = 'Ошибка!';
+    }
+
     setForm(prevForm => ({...prevForm, hex: value, rgb: rgb_val}));
-      //setForm(prevForm => ({...prevForm, [name]: value}))
-      
+     
       }
   return (
     <form>
       <input name='hex' id='hex' value={form.hex} onChange={handleChange}/>
-      <input name='rgb' id='rgb' value={form.rgb}/>
+      <br />
+      <input name='rgb' id='rgb' value={form.rgb} readOnly/>
     </form>
   )
 }
